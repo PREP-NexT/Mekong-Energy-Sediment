@@ -63,4 +63,4 @@ The script implements a parallelized sweep through:
 The `parallel.sh` script uses GNU parallel to run N=10 concurrent processes for efficient computation.
 
 ## Contact
-For questions regarding the code or methodology, please contact [Zhanwei Liu] at [liuzhanwei@u.nus.edu]
+For questions regarding the code or methodology, please contact [Zhanwei Liu](liuzhanwei@u.nus.edu).
