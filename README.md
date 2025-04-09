@@ -42,7 +42,7 @@ Where:
 
 --carbon (<c>): Carbon emission constraint level (1-4, representing different carbon policy scenarios)
 
---sediment (<s>): Minimum sediment transport requirement (14-54, with 0.2 increments)
+--sediment (\<s\>): Minimum sediment transport requirement (14-54, with 0.2 increments)
 
 --limit (<l>): Transmission line scenario (1, 2, 4, or 6 representing different infrastructure configurations)
 
