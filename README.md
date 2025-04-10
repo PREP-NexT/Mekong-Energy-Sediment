@@ -40,11 +40,11 @@ python run_mekong_gurobi.py --carbon=<c> --sediment=<s> --limit=<l>
 
 Where:
 
---carbon (<c>): Carbon emission constraint level (1-4, representing different carbon policy scenarios)
+--carbon (\<c\>): Carbon emission constraint level (1-4, representing different carbon policy scenarios)
 
 --sediment (\<s\>): Minimum sediment transport requirement (14-54, with 0.2 increments)
 
---limit (<l>): Transmission line scenario (1, 2, 4, or 6 representing different infrastructure configurations)
+--limit (\<l\>): Transmission line scenario (1, 2, 4, or 6 representing different infrastructure configurations)
 
 ### Parallel Execution
 For comprehensive parameter space exploration, use the provided parallel execution script:
