@@ -62,5 +62,22 @@ The script implements a parallelized sweep through:
 
 The `parallel.sh` script uses GNU parallel to run N=10 concurrent processes for efficient computation.
 
+### Reproducing Uncertainty Scenario Results
+Before reproducing the results of the scenario analysis, you need to generate the inputs for the uncertainty scenarios first. Since the uncertainty analysis involves 72,900 scenarios, we did not upload all input files. Please follow the steps below to reproduce uncertainty scenario results:
+
+1. Run `./input/generate_uncertainty_input.py` to generate the scenario inputs. You can modify the `start_no`, `end_no`, and `exclude_no` parameters in the script to flexibly define the range and specific scenarios you wish to generate.
+2. After running the script of generating inputs, you will obtain a series of input files named `input_$no.xlsx` (where `no` depends on your specified settings), as well as a summary file named `uncertainty_scenarios_$start_no_$end_no.xlsx`. The summary file includes a `no` column, followed by the parameter values corresponding to the candidate inputs in the `input/uncertainty_input_data` folder.
+3. Once the uncertainty inputs are generated, run the following command to simulate one or multiple scenarios:
+   ```bash
+   python run_mekong_gurobi-uncertainty.py $start_no $end_no
+   ```
+4. To run multiple scenarios in batch mode on a supercomputer, use the `uncertainty_script_55289_61964.sh` script.
+   - This script is designed for [Aspire2a](https://www.nscc.sg/aspire-2a/), which uses the PBS job scheduler. You will need to modify the script according to your computing platform.
+5. After running the scripts, results will be saved under the `./output/Uncertainty` directory.
+
+**Additional Resources:**
+- Summary of all inputs: `input/uncertainty_all_scenarios.xlsx`
+- All output data for uncertainty scenarios is available at: [https://zenodo.org/records/15679035](https://zenodo.org/records/15679035)
+
 ## Contact
 For questions regarding the code or methodology, please contact [Zhanwei Liu](liuzhanwei@u.nus.edu).
