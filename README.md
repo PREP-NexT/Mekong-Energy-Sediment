@@ -62,6 +62,13 @@ The script implements a parallelized sweep through:
 
 The `parallel.sh` script uses GNU parallel to run N=10 concurrent processes for efficient computation.
 
+### Reproducing Figures in the Manuscript
+We have uploaded all the output files and code used to reproduce the figures in the manuscript in the folder `code_data_reproduce_figures`.
+
+Please note that some original output data files in NetCDF (.nc) format are large in size, so they have been compressed to meet GitHub's size limitations. You can download and extract them locally to access the full data.
+
+To view and process the .nc files, we recommend using the [xarray](https://docs.xarray.dev/) package.
+
 ### Reproducing Uncertainty Scenario Results
 Before reproducing the results of the scenario analysis, you need to generate the inputs for the uncertainty scenarios first. Since the uncertainty analysis involves 72,900 scenarios, we did not upload all input files. Please follow the steps below to reproduce uncertainty scenario results:
 
