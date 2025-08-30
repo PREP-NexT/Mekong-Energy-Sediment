@@ -10,7 +10,7 @@ The study investigates optimal renewable energy deployment strategies in the Mek
 
 <img width="4622" height="4589" alt="Extended_Data_Figure1" src="https://github.com/user-attachments/assets/67172584-d1ce-4856-8f1b-c1d4e0afe66b" />
 
-**Overview of the integrated water-sediment-energy modeling framework**. VRE: variable renewable energy; SWAT: Soil and Water Assessment Tool; [PREP-SHOT](https://prep-next.github.io/PREP-SHOT/): Pathways for Renewable Energy Planning coupling Short-term Hydropower OperaTion; CASCADE: CAtchment Sediment Connectivity And Delivery.
+**Overview of the integrated water-sediment-energy modeling framework**. **SWAT**: Soil and Water Assessment Tool. [**PREP-SHOT**: Pathways for Renewable Energy Planning coupling Short-term Hydropower OperaTion](https://prep-next.github.io/PREP-SHOT/). **CASCADE**: CAtchment Sediment Connectivity And Delivery. 
 
 ## Requirements
 
