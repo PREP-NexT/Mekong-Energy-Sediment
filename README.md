@@ -4,9 +4,13 @@
 
 This repository contains data and code accompanying the manuscript:
 
-**Xu et al., Strategizing Renewable Energy Transitions to Preserve Sediment Transport Integrity** (under review)
+Xu, Bo, Liu, Zhanwei, Yan, Shuyue, Schmitt, Rafael J. P., and He, Xiaogang. Strategizing renewable energy transitions to preserve sediment transport integrity. Nature Sustainability (2025). https://doi.org/10.1038/s41893-025-01626-5.
 
 The study investigates optimal renewable energy deployment strategies in the Mekong River basin that balance carbon emission reduction targets with the preservation of critical sediment transport processes.
+
+<img width="4622" height="4589" alt="Extended_Data_Figure1" src="https://github.com/user-attachments/assets/67172584-d1ce-4856-8f1b-c1d4e0afe66b" />
+
+**Overview of the integrated water-sediment-energy modeling framework**. VRE: variable renewable energy; SWAT: Soil and Water Assessment Tool; PREP-SHOT: Pathways for Renewable Energy Planning coupling Short-term Hydropower OperaTion; CASCADE: CAtchment Sediment Connectivity And Delivery.
 
 ## Requirements
 
