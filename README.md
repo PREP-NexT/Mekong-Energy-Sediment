@@ -4,7 +4,7 @@
 
 This repository contains data and code accompanying the manuscript:
 
-Xu, Bo, Liu, Zhanwei, Yan, Shuyue, Schmitt, Rafael J. P., and He, Xiaogang. Strategizing renewable energy transitions to preserve sediment transport integrity. Nature Sustainability (2025). https://doi.org/10.1038/s41893-025-01626-5.
+Bo Xu, Zhanwei Liu, Shuyue Yan, Rafael J. P. Schmitt, and Xiaogang He. Strategizing renewable energy transitions to preserve sediment transport integrity. Nature Sustainability (2025). https://doi.org/10.1038/s41893-025-01626-5.
 
 The study investigates optimal renewable energy deployment strategies in the Mekong River basin that balance carbon emission reduction targets with the preservation of critical sediment transport processes.
 
