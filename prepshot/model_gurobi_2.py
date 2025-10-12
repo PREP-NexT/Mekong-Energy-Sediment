@@ -5,11 +5,11 @@
 import numpy as np
 import gurobipy as gp
 import pandas as pd
-def creat_model(para, weight ,dt=1, ishydro=1, Sed_Cons=0, start=0, start_variables={}, hydro_portfolio=[],trans_limit=0, elec_price=87):
-    # ishydro  0:fixed hydro input(LP),   1:optimiz hydro construct and operation(MILP),  2:only optimize opration, dam portfolio must be given(LP)
+def creat_model(para, weight ,dt=1, ishydro=1, Sed_Cons=0, start=0, start_variables={}, hydro_portfolio=[],trans_limit=0, elec_price=0,import_limit=1):
+    # ishydro  0:fixed hydro input(LP),   1:optimiz hydro construct and operation(MILP),  2:only optimize opration, must give the dam portfolio (LP)  3：only optimize operation, no need dam portfolio
     # Sed_Cons    0: no constraints    >0 have constraints
     # start   0:no start solution    1: start solution containing all variables    2: start solution containing only binary variables
-    # if start!=0  start_variables must be given
+    # if start!=0  must give start_variables
     model= gp.Model()
     result={}
     # sets and parameters
@@ -118,7 +118,7 @@ def creat_model(para, weight ,dt=1, ishydro=1, Sed_Cons=0, start=0, start_variab
                     charge_z = sum([charge[h, m, y, z, te] for te in storage_tech]) *dt
                     demand_z =  para['demand'][z, y, m, h] *dt
                     if (trans_limit != 6) and z=='China':
-                        model.addConstr(demand_z == imp_z - exp_z + gen_z/3.0 - charge_z)
+                        model.addConstr(demand_z == imp_z - exp_z + gen_z* import_limit - charge_z)
                     else:
                         model.addConstr(demand_z == imp_z - exp_z + gen_z - charge_z)
     #################### Transmission capacity constraints #############################
@@ -142,13 +142,13 @@ def creat_model(para, weight ,dt=1, ishydro=1, Sed_Cons=0, start=0, start_variab
             new_capacity_line = sum(cap_newline[yy, z_out, z_in] for yy in year[:year.index(y) + 1])
             new_capacity_limit = para['transmission limit'][z_out,z_in]
             model.addConstr(new_capacity_line <= new_capacity_limit)
-    elif trans_limit ==3: # the Mekong coutries' transmission lines can be extended except China. self-sucifficient--1/3 demand can be imported （non-used scenario)
+    elif trans_limit ==3: # the Mekong coutries' transmission lines can be extended except China. self-sucifficient--1/3 demand can be imported
         for z in zone:
             for y in year:
                 imp_y = sum(trans_import[h,m,y,z_out,z] for h in hour for m in month for z_out in zone if (z != z_out and not np.isnan(para['transmission'][z_out,z])))*dt/weight
                 demand_y = sum(para['demand'][z,y,m,h] for h in hour for m in month)*dt/weight
                 if z!='China':
-                    model.addConstr(imp_y <=  demand_y/3.0 )
+                    model.addConstr(imp_y <=  demand_y* import_limit )
         for y in year:
             for z in ['Laos','Myanmar','Vietnam']:
                 new_capacity_line_China = sum(cap_newline[yy, 'China', z] for yy in year[:year.index(y) + 1])
@@ -160,7 +160,7 @@ def creat_model(para, weight ,dt=1, ishydro=1, Sed_Cons=0, start=0, start_variab
                 imp_y = sum(trans_import[h,m,y,z_out,z] for h in hour for m in month for z_out in zone if (z != z_out and not np.isnan(para['transmission'][z_out,z])))*dt/weight
                 demand_y = sum(para['demand'][z,y,m,h] for h in hour for m in month)*dt/weight
                 if z!='China':
-                    model.addConstr(imp_y <=  demand_y/3.0 )
+                    model.addConstr(imp_y <=  demand_y * import_limit )
 
     ############################  Maximum output constraint ############################
     model.addConstrs(gen[h, m, y, z, te] <= cap_existing[y, z, te]
@@ -411,6 +411,11 @@ def add_hydro_1(model, para, dt, gen, cap_newtech, weight, result, Sed_Cons, sta
     #initial and end storage
     if len(month)>1: #non-continuous
         for m in month:
+            # model.addConstrs(storage_hydro[s, hour_p[0], m, y] == para['storageinit'][m, s]
+            #                  for s in station_daily for y in year)
+            # model.addConstrs(storage_hydro[s, hour_p[-1], m, y] == para['storageend'][m, s]
+            #                  for s in station_daily for y in year)
+
             # daily-operation stations, given the initial and end storage in a day
             model.addConstrs(storage_hydro[s, hour_p[0], m, y] ==  storage_hydro[s, hour_p[-1], m, y]
                              for s in station_daily for y in year)
@@ -626,6 +631,11 @@ def add_hydro_2(model, para, dt, gen, cap_newtech, weight, result, Sed_Cons, hyd
     #initial and end storage
     if len(month)>1: #non-continuous
         for m in month:
+            # daily-operation stations, given the initial and end storage in a day
+            # model.addConstrs(storage_hydro[s, hour_p[0], m, y] == para['storageinit'][m, s]
+            #                  for s in station_daily for y in year)
+            # model.addConstrs(storage_hydro[s, hour_p[-1], m, y] == para['storageend'][m, s]
+            #                  for s in station_daily for y in year)
             model.addConstrs(storage_hydro[s, hour_p[0], m, y] ==  storage_hydro[s, hour_p[-1], m, y]
                              for s in station_daily for y in year)
             # runoff stations
@@ -670,15 +680,15 @@ def add_hydro_2(model, para, dt, gen, cap_newtech, weight, result, Sed_Cons, hyd
     model.addConstrs(outflow[s,h,m,y] == inflow[s,h,m,y]
                      for s in station_unbuilt for h in hour for m in month for y in year if isbuilt[s] ==0 )
 
-    model.addConstrs(spillflow[s,h,m,y] <= outflow[s,h,m,y] + isbuilt[s]*para['static']['outflow_max',s]*10
-                     for s in station_unbuilt for h in hour for m in month for y in year if int(para['static']['COD',s]) <= y)
-    model.addConstrs(spillflow[s,h,m,y] >= outflow[s,h,m,y] - isbuilt[s]*para['static']['outflow_max',s]*10
-                     for s in station_unbuilt for h in hour for m in month for y in year if int(para['static']['COD',s]) <= y)
-
-    model.addConstrs(outflow[s,h,m,y] <= inflow[s,h,m,y] + isbuilt[s]*para['static']['outflow_max',s]*10
-                     for s in station_unbuilt for h in hour for m in month for y in year if int(para['static']['COD',s]) <= y)
-    model.addConstrs(outflow[s,h,m,y] >= inflow[s,h,m,y] - isbuilt[s]*para['static']['outflow_max',s]*10
-                     for s in station_unbuilt for h in hour for m in month for y in year if int(para['static']['COD',s]) <= y)
+    # model.addConstrs(spillflow[s,h,m,y] <= outflow[s,h,m,y] + isbuilt[s]*para['static']['outflow_max',s]*10
+    #                  for s in station_unbuilt for h in hour for m in month for y in year if int(para['static']['COD',s]) <= y)
+    # model.addConstrs(spillflow[s,h,m,y] >= outflow[s,h,m,y] - isbuilt[s]*para['static']['outflow_max',s]*10
+    #                  for s in station_unbuilt for h in hour for m in month for y in year if int(para['static']['COD',s]) <= y)
+    #
+    # model.addConstrs(outflow[s,h,m,y] <= inflow[s,h,m,y] + isbuilt[s]*para['static']['outflow_max',s]*10
+    #                  for s in station_unbuilt for h in hour for m in month for y in year if int(para['static']['COD',s]) <= y)
+    # model.addConstrs(outflow[s,h,m,y] >= inflow[s,h,m,y] - isbuilt[s]*para['static']['outflow_max',s]*10
+    #                  for s in station_unbuilt for h in hour for m in month for y in year if int(para['static']['COD',s]) <= y)
     # hydropower new built cost
     for z in zone:
         for y in year:
@@ -690,7 +700,7 @@ def add_hydro_2(model, para, dt, gen, cap_newtech, weight, result, Sed_Cons, hyd
                 model.addConstr(cap_newtech[2030, z, 'Hydro'] == new_built_hydro)
             else:
                 model.addConstr(cap_newtech[y, z, 'Hydro'] == 0)
-    # calculate sediment constraint
+    # calculate sediment constraint   if ishydro=2,the constraint does not work; only caculate the sediment output
     if Sed_Cons>0:
 
         #########################parameters#################################
